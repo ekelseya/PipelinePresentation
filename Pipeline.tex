@@ -57,7 +57,58 @@ The camera transformation can be thought of as one more coordinate system: based
 
 A pyramid is formed with C, A, and $\alpha$ which is then truncated by n and f into a frustum.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=3.0in]{viewingpyramid.gif}
+    \caption{The viewing pyramid}
+    \label{viewingpyramid}
+\end{figure}
+
+The camera transformation is a combination of two transformations: first, the world coordinates are transformed to local coordinates, then the viewing transform is applied.
+
+\paragraph
+If the camera is at the origin, the viewing direction is alonng the negative $w$ axis. Points are projected along the line that passes through the origin onto a plane defined by $w = -d$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=3.0in]{projectiontriangle.gif}
+    \caption{The projection of a point onto the plane}
+    \label{projectiontriangle}
+\end{figure}
+
+Note: $v' = (\frac{d}{-w})v$ and $u' = (\frac{d}{-w})u$.
+
+The transformation is expressed in homogenous coordinates by 
+
+\[P_{d} = \begin{bmatrix}
+d & 0 & 0 & 0 \\
+0 & d & 0 & 0 \\
+0 & 0 & d & -1 \\
+0 & 0 & 0 & 0
+\end{bmatrix}/]
+
+because
+
+\[\begin{bmatrix}
+u & v & w & l
+\end{bmatrix}
+\begin{bmatrix}
+d & 0 & 0 & 0 \\
+0 & d & 0 & 0 \\
+0 & 0 & d & -1 \\
+0 & 0 & 0 & 0
+\end{bmatrix}
+
+=
+
+\begin{bmatrix}
+du & dv & dw & -w
+\end{bmatrix}\]
+
+This unique fourth column gives the distance of the point from the $xy$ plane.
+
 \section{Geometry}
+
 \subsection{Projection}
 Projection transforms the view volume into a unit cube with extreme points at (1, 1, 1) and (-1, -1, -1). This step is called projection even though it is a volume to volume transformation because the z-coordinate is saved for the rasterization step.
 
