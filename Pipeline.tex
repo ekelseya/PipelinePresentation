@@ -10,7 +10,7 @@
 \maketitle
 
 \begin{abstract}
-The rendering pipeline is the steps a graphics system needs to follow to render a 3D scene to a 2D screen. These steps start with the Application, then the Geometry, the Rasterization, and finally the Display. This presentation provides a brief overview of each of the steps and the matrices used to transform 3D objects into 2D displays.
+The rendering pipeline is theseries of steps a graphics system needs to follow to render a 3D scene to a 2D screen. These steps start with the Application, then the Geometry, the Rasterization, and finally the Display. This presentation provides a brief overview of each of the steps and the matrices used to transform 3D objects into 2D displays.
 \end{abstract}
 
 \section{Introduction}
@@ -26,6 +26,26 @@ List of vertices (points in 3D space), with each vertex being defined by its x, 
 
 \subsection{Homogeneous Coordinates}
 Imagine a 2D projector. The X and Y values are easy to see, but what happens to the image as you move the projector closer or further away from the screen? The image is scaled up or down. This is the W value in homogeneous coordinates.\footnote[1]{https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/} All vertices and vectors are in homogenous (x, y, z, w) form. At this time, W = 1 for vertices (points in space) and W = 0 for vectors (directions and facings). Other values of W are used in later steps for projection. The use of homogeneous vectors allows for standard 4x4 matrices to be used to transform both vertices and vectors.
+
+\subsection{Model/World Transformation}
+\subsubsection{World Coordinate System}
+The world coordinates are the bedrock of the 3D model. This universal coordinate system is independent of the camera and objects or primatives, which each have their own coordinate system, are placed within the world coordinates. Every point is defined by three vertices $(x, y, z)$. The cartesian coordinates can be left- or right- handed, defined by whether the z vertex points into or out of the display./footnote[1]{cs.uic.edu} Depending on the coordinate system being used, the models may need to be inverted when loading for veiwing.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=3.0in]{InsertImageFileHere}
+    \caption{Left- and Right- Handed Cartesian Coordinates}
+    \label{LeftRight}
+\end{figure}
+
+\subsubsection{Object Coordinate System}
+As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedren, further broken down into triangles. Each triangle is defined, counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front of the primative. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed and equal amount.
+
+\paragraph
+Objects can further have a hierarchal coordinate system. The University of Illinois uses the example of a hand being positioned relative to the arm, rather than to the world coordinate system. 
+
+\subsection{Camera Transformation}
+The camera transformation can be thought of as one more coordinate system: based upon the viewpoint of the observer, changing as the point of view changes. 
 
 \section{Geometry}
 \subsection{Projection}
