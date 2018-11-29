@@ -13,11 +13,22 @@
 \maketitle
 
 \begin{abstract}
-The rendering pipeline is theseries of steps a graphics system needs to follow to render a 3D scene to a 2D screen. These steps start with the Application, then the Geometry, the Rasterization, and finally the Display. This presentation provides a brief overview of each of the steps and the matrices used to transform 3D objects into 2D displays.
+The rendering pipeline is the series of steps a graphics system needs to follow to render a 3D scene to a 2D screen. These steps start with the Application, then the Geometry, the Rasterization, and finally the Display. This presentation provides a brief overview of each of the steps and the matrices used to transform 3D objects into 2D displays.
 \end{abstract}
 
 \section{Introduction}
-Here is the text of your introduction.
+3D graphics have become ubiquitous in the modern world. They are used in everything from movies to advertisements to, of course, computer games. Graphics applications like Blender and OpenGL make designing 3D graphics a relatively simply process, because they automate the transformations necessary to create and manipulate a 3D image and project it onto a 2D display.
+
+The graphics pipeline is that series of steps needed to render a 3D scene to a 2D screen.\footnote{\url{https://commons.wikimedia.org/w/index.php?curid=58106609}}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=3.0in]{Graphics_pipeline_2_en.png}
+    \caption{By PaterMcFly / Vierge Marie}
+    \label{pipeline}
+\end{figure} 
+
+This presentation provides a broad overview of these steps, focusing on the use of matrices in each transformation.
 
 \section{Application: how 3D models are stored}
 
