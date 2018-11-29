@@ -19,7 +19,7 @@ The rendering pipeline is the series of steps a graphics system needs to follow 
 \section{Introduction}
 3D graphics have become ubiquitous in the modern world. They are used in everything from movies to advertisements to, of course, computer games. Graphics applications like Blender and OpenGL make designing 3D graphics a relatively simply process, because they automate the transformations necessary to create and manipulate a 3D image and project it onto a 2D display.
 
-The graphics pipeline is that series of steps needed to render a 3D scene to a 2D screen.\footnote{\url{https://commons.wikimedia.org/w/index.php?curid=58106609}}
+The graphics pipeline is that series of steps needed to render a 3D scene to a 2D screen. \footnote{\url{https://commons.wikimedia.org/w/index.php?curid=58106609}}
 
 \begin{figure}[H]
     \centering
@@ -33,7 +33,7 @@ This presentation provides a broad overview of these steps, focusing on the use 
 \section{Application: how 3D models are stored}
 
 \subsection{World Coordinate System}
-The world coordinates are the bedrock of the 3D model. This universal coordinate system is independent of the camera and objects or primatives, which each have their own coordinate system, are placed within the world coordinates. Every point is defined by three vertices $(x, y, z)$. The cartesian coordinates can be left- or right- handed, defined by whether the z vertex points into or out of the display.\footnote{\url{cs.uic.edu}} Depending on the coordinate system being used, the models may need to be inverted when loading for veiwing.
+The world coordinates are the bedrock of the 3D model. This universal coordinate system is independent of the camera, and objects or primatives, which each have their own coordinate system, are placed within the world coordinates. Every point is defined by three vertices $(x, y, z)$. The cartesian coordinates can be left- or right- handed, defined by whether the z vertex points into or out of the display.\footnote{\url{cs.uic.edu}} Depending on the coordinate system being used, the models may need to be inverted when loading for veiwing.
 
 \begin{figure}[H]
     \centering
@@ -43,23 +43,39 @@ The world coordinates are the bedrock of the 3D model. This universal coordinate
 \end{figure}
 
 \subsection{Homogeneous Coordinates}
-3D graphics make use of homogeneous coordinates. Imagine a 2D projector. The X and Y values are easy to see, but what happens to the image as you move the projector closer or further away from the screen? The image is scaled up or down. This is the w value in homogeneous coordinates.\footnote{\url{https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/}} All vertices and vectors are in homogenous $(x, y, z, w)$ form. At this time, $w = 1$ for vertices (points in space) and $w = 0$ for vectors (directions and facings). Other values of $w$ are used in later steps for projection. The use of homogeneous vectors allows for standard 4x4 matrices to be used to transform both vertices and vectors.
+3D graphics make use of homogeneous coordinates. Imagine a 2D projector. The X and Y values are easy to see, but what happens to the image as you move the projector closer or further away from the screen? The image is scaled up or down. This is the w value in homogeneous coordinates.\footnote{\url{https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/}} All vertices and vectors are in homogeneous $(x, y, z, w)$ form. At this time, $w = 1$ for vertices (points in space) and $w = 0$ for vectors (directions and facings). Other values of $w$ are used in later steps for projection. The use of homogeneous vectors allows for standard 4x4 matrices to be used to transform both vertices and vectors.
 
-\subsubsection{Object Coordinate System}
-As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedren, further broken down into triangles. Each triangle is defined, possibly counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front of the primative. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed and equal amount.
+\subsection{Object Coordinate System}
+As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedren, further broken down into triangles. Each triangle is defined, possibly counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front or face of the primative. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed an equal amount.
 
 Objects can further have a hierarchal coordinate system. The University of Illinois uses the example of a hand being positioned relative to the arm, rather than to the world coordinate system. 
 
-\subsection{Face-Vertex Mesh}
-\begin{itemize}
-\item Face List
-A list of faces (triangles), with each face being defined by the three vertices that make it up.
-\item Vertex List
-List of vertices (points in 3D space), with each vertex being defined by its x, y, and z coordinates, as well as a list of faces that it belongs to. This is redundant, but saves having to search the face list.\footnote{\url{https://en.wikipedia.org/wiki/Polygon_mesh\#Face-vertex_meshes}}
-\end{itemize}
+\subsubsection{Polygon Mesh}
+To build the Object Coordinate System, objects are represented by a polygon mesh: the vertices, edges, and faces that define the shape of the object. Faces consist of simple convex polygons to simplify rendering.\footnote{\url{https://commons.wikimedia.org/w/index.php?curid=10626667}}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=3.0in]{Dolphin_triangle_mesh.png}
+    \caption{An example of a Polygon Mesh}
+    \label{dolphin}
+\end{figure}
+
+Vertices are connected to form edges, which are connected to form faces. Faces are connected into polygons; polygons are connected into surfaces, and finally, the surfaces are connected into the object.\footnote{\url{https://commons.wikimedia.org/w/index.php?curid=7021230}}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=3.0in]{Mesh_overview.png}
+    \caption{Mesh Overview}
+    \label{meshOverview}
+\end{figure}
+
+\subsubsection{Face-vertex Meshes}
+The most widely used mesh representation is the Face-vertex mesh. This representation is the input typically accepted by modern graphics hardware. The Face-vertex mesh is made up of the Face List: a list of faces (triangles), with each face being defined by the three vertices that make it up, and the Vertex List: list of vertices (points in 3D space), with each vertex being defined by its x, y, and z coordinates, as well as a list of faces that it belongs to. This is redundant, but saves having to search the face list\footnote{\url{https://en.wikipedia.org/wiki/Polygon_mesh\#Face-vertex_meshes}}
 
 \subsection{Camera Transformation}
-The camera transformation can be thought of as one more coordinate system: based upon the viewpoint of the observer, changing as the point of view changes. This coordinate system is defined  by:
+Once a world has been described with a World Coordinate System, and it has been populated by primatives, each with its own Object Coordination System, it is time to build the camera, or what the observer can see.
+
+The camera transformation can be thought of as one more coordinate system: based upon the viewpoint of the observer, changing as the point of view changes. This coordinate system is defined  by:\footnote{\url{http://idav.ucdavis.edu/education/GraphicsNotes/Viewing-Transformation/Viewing-Transformation.html\#matrix}}
 
 \begin{itemize}
 \item A scene of the world coordinates, including all primatives within those coordinates
@@ -81,12 +97,10 @@ The transformation of the truncated viewing volume is given by:
 0 & 0 & \frac{2fn}{f-n} & 0
 \end{pmatrix}\]
 
-\footnote{\url{http://idav.ucdavis.edu/education/GraphicsNotes/Viewing-Transformation/Viewing-Transformation.html\#matrix}}
-
 \section{Geometry}
 
 \subsection{Projection}
-Projection transforms the view volume into a unit cube with extreme points at (1, 1, 1) and (-1, -1, -1). This step is called projection even though it is a volume to volume transformation because the z-coordinate is saved for the rasterization step.
+Projection transforms the view volume into a unit cube with extreme points at (1, 1, 1) and (-1, -1, -1). This step is called projection even though it is a volume to volume transformation because the z-coordinate is saved for the rasterization step.\footnote{Real-Time Rendering, Akenine-Möller, T., Haines, E., Hoffman, N.}
 
 \subsubsection{Types of Projection}
 
@@ -98,7 +112,7 @@ Projection transforms the view volume into a unit cube with extreme points at (1
 \end{figure}
 
 \subsubsection{Orthographic Projection}
-Orthographic projection is mostly used in engineering for multi-view drawings. It is to scale, and all parallel line remain parallel with no forced perspective. An orthographic projection transformation can be represented as
+Orthographic projection is mostly used in engineering for multi-view drawings. It is to scale, and all parallel lines remain parallel with no forced perspective. An orthographic projection transformation can be represented as:\footnote{Applied Geometry for Computer Graphics and CAD, Marsh, D.}
 
 \[ P = \begin{pmatrix}
   1 & 0 & 0 & 0 \\
@@ -107,7 +121,8 @@ Orthographic projection is mostly used in engineering for multi-view drawings. I
   0 & 0 & 0 & 1 
  \end{pmatrix}\]	
 
-Each homogeneous vector $v = (v_x, v_y, v_z, 1)$, the transformed vector would be
+
+For each homogeneous vector $v = (v_x, v_y, v_z, 1)$, the transformed vector would be
 
 \[P_{v} = \begin{pmatrix}
   1 & 0 & 0 & 0 \\
@@ -115,7 +130,6 @@ Each homogeneous vector $v = (v_x, v_y, v_z, 1)$, the transformed vector would b
   0 & 0 & 0 & 0 \\
   0 & 0 & 0 & 1 
  \end{pmatrix}	
-*
 \begin{pmatrix}
   v_{x} \\
   v_{y} \\
@@ -131,7 +145,7 @@ Each homogeneous vector $v = (v_x, v_y, v_z, 1)$, the transformed vector would b
  \end{pmatrix}\]
 
 \subsubsection{Weak Perspective Projection}
-Weak perspective projection adds a scaling factor to orthographic projection. This scaling factor uses averages to apporximate perspective and is used with simple models and small fields of view.
+Weak perspective projection adds a scaling factor to orthographic projection. This scaling factor uses averages to approximate perspective and is used with simple models and small fields of view.\footnote{Applied Geometry for Computer Graphics and CAD, Marsh, D.}
 
   \[P_{x} =  \frac{X}{Z_{ave}}\]
   \[P_{y} =  \frac{Y}{Z_{ave}}\]
@@ -139,7 +153,7 @@ Weak perspective projection adds a scaling factor to orthographic projection. Th
 assuming focal length $f = 1$.
 
 \subsubsection{Perspective Projection}
-Perspective projection most closely replicates the human binocular vision where distant objects appear smaller. To describe the transformation, we must start with four variables:
+Perspective projection most closely replicates the human binocular vision where distant objects appear smaller. To describe the transformation, we must start with four variables:\footnote{Applied Geometry for Computer Graphics and CAD, Marsh, D.}
 
 \begin{itemize}
   \item $a_{x, y, z}$ - the 3D position of a point A that is to be projected
@@ -186,7 +200,7 @@ To compute the 2D projection ($b_{x, y}$) of the point A ($a_{x, y, z}$) that is
 \right)\]
 
 \subsection{Clipping}
-Clipping saves time and energy by specifying only those objects within the view volume for rendering. The vidual unit cube has been transformed into a truncated pyramid (frustrum) and objects outside of the frustrum are discarded by a method appropriately named frustrum culling. Objects that will be obscured by other primatives are also culled through backface culling. Objects inside the frustum are saved for rasterization.
+Clipping saves time and energy by specifying only those objects within the view volume for rendering. The vidual unit cube has been transformed into a truncated pyramid (frustrum) and objects outside of the frustrum are discarded by a method appropriately named frustrum culling. Objects that will be obscured by other primatives are also culled through backface culling. Objects inside the frustum are saved for rasterization.\footnote{\url{http://graphics.cs.cmu.edu/nsp/course/15-462/Spring04/slides/06-viewing.pdf}}
 
 Objects that intersect the edges of the frustrum must be clipped. Line clipping simply modifies the endpoints of lines to lie within the appropriate rectangle. Polygon clipping converts a polygon that intersects the frustum into one or more polygons the form the intersection of the original with the clip window. The Sutherland-Hodgman Polygon Clipping Algorithm is commonly used\footnote{\url{https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-please-change-bmp-images-jpeg-png/}}:
 
