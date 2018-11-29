@@ -1,6 +1,9 @@
 \documentclass{article}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{float}
 
 \begin{document}
 
@@ -17,32 +20,32 @@ The rendering pipeline is theseries of steps a graphics system needs to follow t
 Here is the text of your introduction.
 
 \section{Application: how 3D models are stored}
-\subsection{Face-Vertex Mesh}
-\subsubsection{Face List}
-A list of faces (triangles), with each face being defined by the three vertices that make it up.
 
-\subsubsection{Vertex List}
-List of vertices (points in 3D space), with each vertex being defined by its x, y, and z coordinates, as well as a list of faces that it belongs to. This is redundant, but saves having to search the face list.
+\subsection{World Coordinate System}
+The world coordinates are the bedrock of the 3D model. This universal coordinate system is independent of the camera and objects or primatives, which each have their own coordinate system, are placed within the world coordinates. Every point is defined by three vertices $(x, y, z)$. The cartesian coordinates can be left- or right- handed, defined by whether the z vertex points into or out of the display.\footnote{\url{cs.uic.edu}} Depending on the coordinate system being used, the models may need to be inverted when loading for veiwing.
 
-\subsection{Homogeneous Coordinates}
-Imagine a 2D projector. The X and Y values are easy to see, but what happens to the image as you move the projector closer or further away from the screen? The image is scaled up or down. This is the W value in homogeneous coordinates.\footnote[1]{https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/} All vertices and vectors are in homogenous (x, y, z, w) form. At this time, W = 1 for vertices (points in space) and W = 0 for vectors (directions and facings). Other values of W are used in later steps for projection. The use of homogeneous vectors allows for standard 4x4 matrices to be used to transform both vertices and vectors.
-
-\subsection{Model/World Transformation}
-\subsubsection{World Coordinate System}
-The world coordinates are the bedrock of the 3D model. This universal coordinate system is independent of the camera and objects or primatives, which each have their own coordinate system, are placed within the world coordinates. Every point is defined by three vertices $(x, y, z)$. The cartesian coordinates can be left- or right- handed, defined by whether the z vertex points into or out of the display./footnote[1]{cs.uic.edu} Depending on the coordinate system being used, the models may need to be inverted when loading for veiwing.
-
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=3.0in]{leftrght.png}
     \caption{Left- and Right- Handed Cartesian Coordinates}
     \label{LeftRight}
 \end{figure}
 
-\subsubsection{Object Coordinate System}
-As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedren, further broken down into triangles. Each triangle is defined, counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front of the primative. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed and equal amount.
+\subsection{Homogeneous Coordinates}
+3D graphics make use of homogeneous coordinates. Imagine a 2D projector. The X and Y values are easy to see, but what happens to the image as you move the projector closer or further away from the screen? The image is scaled up or down. This is the w value in homogeneous coordinates.\footnote{\url{https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/}} All vertices and vectors are in homogenous $(x, y, z, w)$ form. At this time, $w = 1$ for vertices (points in space) and $w = 0$ for vectors (directions and facings). Other values of $w$ are used in later steps for projection. The use of homogeneous vectors allows for standard 4x4 matrices to be used to transform both vertices and vectors.
 
-\paragraph
+\subsubsection{Object Coordinate System}
+As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedren, further broken down into triangles. Each triangle is defined, possibly counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front of the primative. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed and equal amount.
+
 Objects can further have a hierarchal coordinate system. The University of Illinois uses the example of a hand being positioned relative to the arm, rather than to the world coordinate system. 
+
+\subsection{Face-Vertex Mesh}
+\begin{itemize}
+\item Face List
+A list of faces (triangles), with each face being defined by the three vertices that make it up.
+\item Vertex List
+List of vertices (points in 3D space), with each vertex being defined by its x, y, and z coordinates, as well as a list of faces that it belongs to. This is redundant, but saves having to search the face list.\footnote{\url{https://en.wikipedia.org/wiki/Polygon_mesh\#Face-vertex_meshes}}
+\end{itemize}
 
 \subsection{Camera Transformation}
 The camera transformation can be thought of as one more coordinate system: based upon the viewpoint of the observer, changing as the point of view changes. This coordinate system is defined  by:
@@ -67,7 +70,7 @@ The transformation of the truncated viewing volume is given by:
 0 & 0 & \frac{2fn}{f-n} & 0
 \end{pmatrix}\]
 
-\footnote[1]{http://idav.ucdavis.edu/education/GraphicsNotes/Viewing-Transformation/Viewing-Transformation.html\#matrix}
+\footnote{\url{http://idav.ucdavis.edu/education/GraphicsNotes/Viewing-Transformation/Viewing-Transformation.html\#matrix}}
 
 \section{Geometry}
 
@@ -76,7 +79,7 @@ Projection transforms the view volume into a unit cube with extreme points at (1
 
 \subsubsection{Types of Projection}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=3.0in]{Graphical_projection_comparison.png}
     \caption{A comparison of projection types}
@@ -173,10 +176,10 @@ To compute the 2D projection ($b_{x, y}$) of the point A ($a_{x, y, z}$) that is
 
 \subsection{Clipping}
 Clipping saves time and energy by specifying only those objects within the view volume for rendering. The vidual unit cube has been transformed into a truncated pyramid (frustrum) and objects outside of the frustrum are discarded by a method appropriately named frustrum culling. Objects that will be obscured by other primatives are also culled through backface culling. Objects inside the frustum are saved for rasterization.
-\paragraph
-Objects that intersect the edges of the frustrum must be clipped. Line clipping simply modifies the endpoints of lines to lie within the appropriate rectangle. Polygon clipping converts a polygon that intersects the frustum into one or more polygons the form the intersection of the original with the clip window. The Sutherland-Hodgman Polygon Clipping Algorithm is commonly used\footnote[2]{https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-please-change-bmp-images-jpeg-png/}:
 
-\begin{figure}
+Objects that intersect the edges of the frustrum must be clipped. Line clipping simply modifies the endpoints of lines to lie within the appropriate rectangle. Polygon clipping converts a polygon that intersects the frustum into one or more polygons the form the intersection of the original with the clip window. The Sutherland-Hodgman Polygon Clipping Algorithm is commonly used\footnote{\url{https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-please-change-bmp-images-jpeg-png/}}:
+
+\begin{figure}[H]
     \centering
     \includegraphics[width=3.0in]{Sutherland-Hodgman-Example.jpg}
     \caption{An example of the Sutherland-Hodgman Algorithm in use}
