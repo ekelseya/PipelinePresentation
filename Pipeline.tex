@@ -116,13 +116,13 @@ Orthographic projection is mostly used in engineering for multi-view drawings. I
 
 \[ P = \begin{pmatrix}
   1 & 0 & 0 & 0 \\
-  0 & 1 & 1 & 1 \\
+  0 & 1 & 1 & 1 \\ 
   0 & 0 & 0 & 0 \\
   0 & 0 & 0 & 1 
- \end{pmatrix}\]	
+\end{pmatrix}\]	
 
 
-For each homogeneous vector $v = (v_x, v_y, v_z, 1)$, the transformed vector would be
+For each homogeneous vector $v = (v_{x}, v_{y}, v_{z}, 1)$, the transformed vector would be
 
 \[P_{v} = \begin{pmatrix}
   1 & 0 & 0 & 0 \\
@@ -202,7 +202,7 @@ To compute the 2D projection ($b_{x, y}$) of the point A ($a_{x, y, z}$) that is
 \subsection{Clipping}
 Clipping saves time and energy by specifying only those objects within the view volume for rendering. The vidual unit cube has been transformed into a truncated pyramid (frustrum) and objects outside of the frustrum are discarded by a method appropriately named frustrum culling. Objects that will be obscured by other primatives are also culled through backface culling. Objects inside the frustum are saved for rasterization.\footnote{\url{http://graphics.cs.cmu.edu/nsp/course/15-462/Spring04/slides/06-viewing.pdf}}
 
-Objects that intersect the edges of the frustrum must be clipped. Line clipping simply modifies the endpoints of lines to lie within the appropriate rectangle. Polygon clipping converts a polygon that intersects the frustum into one or more polygons the form the intersection of the original with the clip window. The Sutherland-Hodgman Polygon Clipping Algorithm is commonly used\footnote{\url{https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-please-change-bmp-images-jpeg-png/}}:
+Objects that intersect the edges of the frustrum must be clipped. Line clipping simply modifies the endpoints of lines to lie within the appropriate rectangle. Polygon clipping converts a polygon that intersects the frustum into one or more polygons the form the intersection of the original with the clip window. The Sutherland-Hodgman Polygon Clipping Algorithm is commonly used.\footnote{\url{https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-please-change-bmp-images-jpeg-png/}}:
 
 \begin{figure}[H]
     \centering
@@ -211,18 +211,12 @@ Objects that intersect the edges of the frustrum must be clipped. Line clipping 
     \label{Sutherland-Hodgman}
 \end{figure}
 
-\subsection{Window-Viewport Transformation}
-Translates camera coordinated into screen coordinated in order to match the size and location of the window
-
 \subsection{Rasterization}
-Converts primitives (shapes) to discrete coordinates (pixels)
+Rasterization is the final step prior to display. The transformed vectors from the camera translation are converted into pixels. This process is extremely fast compared to the other steps as it is simply mapping from the previous geometry steps onto pixels. Shading, lighting, z-buffering are all done at the rasterization step and help increase the illusion of 3D images on 2D screens.\footnote{\url{https://en.wikipedia.org/wiki/Rasterisation}}
 
-\subsubsection{Bresenham's line algorithm}
-Draws line between two points in pixels
+Finally, the image is displayed on the screen.
 
-\subsubsection{Z-buffering}
-Solves visibility problem
 \section{Conclusion}
-Write your conclusion here.
+Modern graphics hardware and software have made much of the 3D graphics pipeline automatic. The math behind the transformations necessary to create worlds as different as Minecraft and Assassin's Creed are ultimately the same. The steps of the 3D graphics pipeline, Application, Geometry, and Rasterization, all make use of linear transformations represented by matrices.
 
 \end{document}
