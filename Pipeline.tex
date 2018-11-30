@@ -19,6 +19,7 @@ The rendering pipeline is the series of steps a graphics system needs to follow 
 \section{Introduction}
 3D graphics have become ubiquitous in the modern world. They are used in everything from movies to advertisements to, of course, computer games. Graphics applications like Blender and OpenGL make designing 3D graphics a relatively simply process, because they automate the transformations necessary to create and manipulate a 3D image and project it onto a 2D display.
 
+
 The graphics pipeline is that series of steps needed to render a 3D scene to a 2D screen. \footnote{\url{https://commons.wikimedia.org/w/index.php?curid=58106609}}
 
 \begin{figure}[H]
@@ -43,7 +44,11 @@ The world coordinates are the bedrock of the 3D model. This universal coordinate
 \end{figure}
 
 \subsection{Homogeneous Coordinates}
-3D graphics make use of homogeneous coordinates. Imagine a 2D projector. The X and Y values are easy to see, but what happens to the image as you move the projector closer or further away from the screen? The image is scaled up or down. This is the w value in homogeneous coordinates.\footnote{\url{https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/}} All vertices and vectors are in homogeneous $(x, y, z, w)$ form. At this time, $w = 1$ for vertices (points in space) and $w = 0$ for vectors (directions and facings). Other values of $w$ are used in later steps for projection. The use of homogeneous vectors allows for standard 4x4 matrices to be used to transform both vertices and vectors.
+Instead of operating in $R^3$, most graphics pipelines use homogeneous coordinates, which exist in $R^4$ and are of the form $(x, y, z, w)$. Homogeneous Coordinates are useful because they allow the same transformations to be applied to both vertices (points in space that change when translated) and vectors (directions and facings, which do not).
+
+A simple metaphor is to imagine a 2D projector. The X and Y values are easy to see, but what happens to the image as you move the projector closer or further away from the screen? The image is scaled up or down. This is similar to the w value in homogeneous coordinates.\footnote{\url{https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/}} 
+
+For now we will set $w = 1$ for all vertices in our vertex list. If we had any vectors (i.e. normal vectors), we would set $w = 0$. (Other values of W will become relevent later in the projection step.) This will allow us to use the same standard $4x4$ matrices to tranform both vertices and vectors (should we need them for more advanced geometry calculations).
 
 \subsection{Object Coordinate System}
 As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedren, further broken down into triangles. Each triangle is defined, possibly counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front or face of the primative. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed an equal amount.
@@ -69,8 +74,18 @@ Vertices are connected to form edges, which are connected to form faces. Faces a
     \label{meshOverview}
 \end{figure}
 
-\subsubsection{Face-vertex Meshes}
-The most widely used mesh representation is the Face-vertex mesh. This representation is the input typically accepted by modern graphics hardware. The Face-vertex mesh is made up of the Face List: a list of faces (triangles), with each face being defined by the three vertices that make it up, and the Vertex List: list of vertices (points in 3D space), with each vertex being defined by its x, y, and z coordinates, as well as a list of faces that it belongs to. This is redundant, but saves having to search the face list\footnote{\url{https://en.wikipedia.org/wiki/Polygon_mesh\#Face-vertex_meshes}}
+\subsubsection{Face-Vertex Mesh}
+The most widely used mesh representation is the Face-vertex mesh. This representation is the input typically accepted by modern graphics hardware. The Face-Vertex Mesh stores model geometry in two parts. The first is a list of vertices. The second is a list of faces.\footnote{\url{https://en.wikipedia.org/wiki/Polygon_mesh\#Face-vertex_meshes}}
+
+\begin{itemize}
+\item{Vertex List:
+List of vertices (points in 3D space), with each vertex being defined by its x, y, and z coordinates. Each vertex also contains a list of faces that it belongs to. (This is redundant, but saves having to search the face list for faces that a specific vertex belongs to.)}
+
+\item{Face List:
+A list of faces (most commonly triangles), with each face being defined by the three vertices that make it up. It is of the form (v1, v2, v3) where v1, v2, and v3 are references to points in the vertex list (usually the index of the vertex in the vertex array).
+
+Since the connections between vertices do no change with normal geometric tranformations, most tranformations only deal with the vertex list with the face list not being used until the final clipping and rasterization steps.}
+\end{itemize}
 
 \subsection{Camera Transformation}
 Once a world has been described with a World Coordinate System, and it has been populated by primatives, each with its own Object Coordination System, it is time to build the camera, or what the observer can see.
@@ -214,14 +229,21 @@ Objects that intersect the edges of the frustrum must be clipped. Line clipping 
 \subsection{Window-Viewport Transformation}
 Translates camera coordinated into screen coordinated in order to match the size and location of the window
 
-\subsection{Rasterization}
-Converts primitives (shapes) to discrete coordinates (pixels)
+In order to be rendered on the screen, the camera coordinates need to first scaled and translated to match the coordinates of the target window (called the viewport).
 
-\subsubsection{Bresenham's line algorithm}
-Draws line between two points in pixels
+\subsection{Rasterization}
+Finally, the rasterization step computes the color that each pixel on the screen should be given the the relvent geomtry, lighting, and shaders.
+
+Rasterization itself is a very complicated proccess, especially when taken into account things like lighting, textures, normal maps, and programmable shaders.
+
+Here, we will limit ourselves to two of the most important steps: Z-buffering and line-drawing.
 
 \subsubsection{Z-buffering}
-Solves visibility problem
+A technique for detirmining which face is closest to the viewer, and therefore visable. Involves finding the z value of each polygon at each pixel, and then storing that value into the z-buffer and writing that polygon's RGB value to the frame buffer if it is lower than the z value already present in the buffer.
+
+\subsubsection{Bresenham's line algorithm}
+An algoritm for drawing a line using pixels between two points. Necessary for drawing a wireframe between the vertices of each face.
+
 \section{Conclusion}
 Write your conclusion here.
 
