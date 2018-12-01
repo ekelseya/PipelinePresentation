@@ -48,10 +48,10 @@ Instead of operating in $R^3$, most graphics pipelines use homogeneous coordinat
 
 A simple metaphor is to imagine a 2D projector. The X and Y values are easy to see, but what happens to the image as you move the projector closer or further away from the screen? The image is scaled up or down. This is similar to the w value in homogeneous coordinates.\footnote{\url{https://www.tomdalling.com/blog/modern-opengl/explaining-homogenous-coordinates-and-projective-geometry/}} 
 
-For now we will set $w = 1$ for all vertices in our vertex list. If we had any vectors (i.e. normal vectors), we would set $w = 0$. (Other values of W will become relevent later in the projection step.) This will allow us to use the same standard $4x4$ matrices to tranform both vertices and vectors (should we need them for more advanced geometry calculations).
+For now, we will set $w = 1$ for all vertices in our vertex list. If we had any vectors (i.e. normal vectors), we would set $w = 0$. (Other values of W will become relevant later in the projection step.) This will allow us to use the same standard $4x4$ matrices to transform both vertices and vectors (should we need them for more advanced geometry calculations).
 
 \subsection{Object Coordinate System}
-As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedren, further broken down into triangles. Each triangle is defined, possibly counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front or face of the primative. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed an equal amount.
+As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedra, further broken down into triangles. Each triangle is defined, possibly counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front or face of the primitive. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed an equal amount.
 
 Objects can further have a hierarchal coordinate system. The University of Illinois uses the example of a hand being positioned relative to the arm, rather than to the world coordinate system. 
 
@@ -84,20 +84,20 @@ List of vertices (points in 3D space), with each vertex being defined by its x, 
 \item{Face List:
 A list of faces (most commonly triangles), with each face being defined by the three vertices that make it up. It is of the form (v1, v2, v3) where v1, v2, and v3 are references to points in the vertex list (usually the index of the vertex in the vertex array).
 
-Since the connections between vertices do no change with normal geometric tranformations, most tranformations only deal with the vertex list with the face list not being used until the final clipping and rasterization steps.}
+Since the connections between vertices do no change with normal geometric tranformations, most transformations only deal with the vertex list with the face list not being used until the final clipping and rasterization steps.}
 \end{itemize}
 
 \subsection{Camera Transformation}
-Once a world has been described with a World Coordinate System, and it has been populated by primatives, each with its own Object Coordination System, it is time to build the camera, or what the observer can see.
+Once a world has been described with a World Coordinate System, and it has been populated by primitives, each with its own Object Coordination System, it is time to build the camera, or what the observer can see.
 
 The camera transformation can be thought of as one more coordinate system: based upon the viewpoint of the observer, changing as the point of view changes. This coordinate system is defined  by:\footnote{\url{http://idav.ucdavis.edu/education/GraphicsNotes/Viewing-Transformation/Viewing-Transformation.html\#matrix}}
 
 \begin{itemize}
-\item A scene of the world coordinates, including all primatives within those coordinates
+\item A scene of the world coordinates, including all primitives within those coordinates
 \item The camera position - $C = (x_{c}, y_{c}, z_{c})$
 \item The point of the camera's focus - $A = (x_{a}, y_{a}, z_{a})$
 \item The field of view angle - $\alpha$
-\item The definition of the near and far planes, perpindicular to A with a distance of n and f from the camera
+\item The definition of the near and far planes, perpendicular to A with a distance of n and f from the camera
 \end{itemize}
 
 A pyramid is formed with C, A, and $\alpha$ which is then truncated by n and f into a frustum.
@@ -174,7 +174,7 @@ Perspective projection most closely replicates the human binocular vision where 
   \item $a_{x, y, z}$ - the 3D position of a point A that is to be projected
   \item $c_{x, y, z}$ - the 3D position of a point C representing the camera
   \item $\theta_{x, y, z}$ - the orientation of the camera
-  \item $e_{x, y, z}$ - the display surface's positon relative to the camera pinhole. (Although negative z values are more correct, the create an inverted image both horizontally and vertically, so most conventions use positive values.
+  \item $e_{x, y, z}$ - the display surface's position relative to the camera pinhole. (Although negative z values are more correct, the create an inverted image both horizontally and vertically, so most conventions use positive values.
 \end{itemize}
 
 To compute the 2D projection ($b_{x, y}$) of the point A ($a_{x, y, z}$) that is to be projected, a vector $d_{x, y, z}$ is first defined as the position of point A with respect to the camera transformation, with origin in C and rotated by $\theta$:
@@ -215,9 +215,9 @@ To compute the 2D projection ($b_{x, y}$) of the point A ($a_{x, y, z}$) that is
 \right)\]
 
 \subsection{Clipping}
-Clipping saves time and energy by specifying only those objects within the view volume for rendering. The vidual unit cube has been transformed into a truncated pyramid (frustrum) and objects outside of the frustrum are discarded by a method appropriately named frustrum culling. Objects that will be obscured by other primatives are also culled through backface culling. Objects inside the frustum are saved for rasterization.\footnote{\url{http://graphics.cs.cmu.edu/nsp/course/15-462/Spring04/slides/06-viewing.pdf}}
+Clipping saves time and energy by specifying only those objects within the view volume for rendering. The visual unit cube has been transformed into a truncated pyramid (frustum) and objects outside of the frustum are discarded by a method appropriately named frustrum culling. Objects that will be obscured by other primitives are also culled through backface culling. Objects inside the frustum are saved for rasterization.\footnote{\url{http://graphics.cs.cmu.edu/nsp/course/15-462/Spring04/slides/06-viewing.pdf}}
 
-Objects that intersect the edges of the frustrum must be clipped. Line clipping simply modifies the endpoints of lines to lie within the appropriate rectangle. Polygon clipping converts a polygon that intersects the frustum into one or more polygons the form the intersection of the original with the clip window. The Sutherland-Hodgman Polygon Clipping Algorithm is commonly used.\footnote{\url{https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-please-change-bmp-images-jpeg-png/}}:
+Objects that intersect the edges of the frustum must be clipped. Line clipping simply modifies the endpoints of lines to lie within the appropriate rectangle. Polygon clipping converts a polygon that intersects the frustum into one or more polygons the form the intersection of the original with the clip window. The Sutherland-Hodgman Polygon Clipping Algorithm is commonly used.\footnote{\url{https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm-please-change-bmp-images-jpeg-png/}}:
 
 \begin{figure}[H]
     \centering
@@ -227,7 +227,7 @@ Objects that intersect the edges of the frustrum must be clipped. Line clipping 
 \end{figure}
 
 \subsection{Rasterization}
-Rasterization is the final step prior to display. The transformed vectors from the camera translation are converted into pixels. The rasterization step computes the color that each pixel on the screen should be given the the relvent geomtry, lighting, and shaders. Rasterization itself is a very complicated proccess, especially when taken into account things like lighting, textures, normal maps, and programmable shaders. Shading, lighting, z-buffering are all done at the rasterization step and help increase the illusion of 3D images on 2D screens.\footnote{\url{https://en.wikipedia.org/wiki/Rasterisation}}
+Rasterization is the final step prior to display. The transformed vectors from the camera translation are converted into pixels. The rasterization step computes the color that each pixel on the screen should be given the relevant geometry, lighting, and shaders. Rasterization itself is a very complicated process, especially when taken into account things like lighting, textures, normal maps, and programmable shaders. Shading, lighting, z-buffering are all done at the rasterization step and help increase the illusion of 3D images on 2D screens.\footnote{\url{https://en.wikipedia.org/wiki/Rasterisation}}
 
 Finally, the image is displayed on the screen.
 
