@@ -51,7 +51,7 @@ A simple metaphor is to imagine a 2D projector. The X and Y values are easy to s
 For now, we will set $w = 1$ for all vertices in our vertex list. If we had any vectors (i.e. normal vectors), we would set $w = 0$. (Other values of W will become relevant later in the projection step.) This will allow us to use the same standard $4x4$ matrices to transform both vertices and vectors (should we need them for more advanced geometry calculations).
 
 \subsection{Object Coordinate System}
-As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedra, further broken down into triangles. Each triangle is defined, possibly counterintuitively, by 4 vertices: the 3 edges, and a fourth vertex defining the front or face of the primitive. When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed an equal amount.
+As mentioned above, each object has its own set of coordinates. Objects are most often represented by polyhedra, further broken down into triangles. Each triangle is defined by 3 vertices, with the odering of them determining the normal vector (and thus the direction the face is pointing). When objects are moved in relation to the world coordinates, the origin of the object (in the object's coordinate system) is moved, with all other points transformed an equal amount.
 
 Objects can further have a hierarchal coordinate system. The University of Illinois uses the example of a hand being positioned relative to the arm, rather than to the world coordinate system. 
 
@@ -84,7 +84,7 @@ List of vertices (points in 3D space), with each vertex being defined by its x, 
 \item{Face List:
 A list of faces (most commonly triangles), with each face being defined by the three vertices that make it up. It is of the form (v1, v2, v3) where v1, v2, and v3 are references to points in the vertex list (usually the index of the vertex in the vertex array).
 
-Since the connections between vertices do no change with normal geometric tranformations, most transformations only deal with the vertex list with the face list not being used until the final clipping and rasterization steps.}
+Since the connections between vertices do not change with normal geometric tranformations, most transformations only deal with the vertex list with the face list not being used until the final clipping and rasterization steps.}
 \end{itemize}
 
 \subsection{Camera Transformation}
