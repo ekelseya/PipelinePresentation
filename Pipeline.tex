@@ -92,6 +92,13 @@ Once a world has been described with a World Coordinate System, and it has been 
 
 The camera transformation can be thought of as one more coordinate system: based upon the viewpoint of the observer, changing as the point of view changes. This coordinate system is defined  by:\footnote{\url{http://idav.ucdavis.edu/education/GraphicsNotes/Viewing-Transformation/Viewing-Transformation.html\#matrix}}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=3.5in]{viewingpyramid.png}
+    \caption{The viewing pyramid}
+    \label{pyramid}
+\end{figure}
+
 \begin{itemize}
 \item A scene of the world coordinates, including all primitives within those coordinates
 \item The camera position - $C = (x_{c}, y_{c}, z_{c})$
@@ -221,7 +228,7 @@ Objects that intersect the edges of the frustum must be clipped. Line clipping s
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=3.0in]{Sutherland-Hodgman-Example.jpg}
+    \includegraphics[width=4.0in]{Sutherland-Hodgman-Example.jpg}
     \caption{An example of the Sutherland-Hodgman Algorithm in use}
     \label{Sutherland-Hodgman}
 \end{figure}
